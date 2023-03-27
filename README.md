@@ -20,7 +20,7 @@ In typical use cases, this is as simple as using Git to clone a
 repository into a directory and checking out a specific branch:
 
 ```
-$ git clone https://https://github.com/some-organization/kafoobulator.git
+$ git clone https://github.com/some-organization/kafoobulator.git
 $ git -C some-repo checkout 1.2.3
 ```
 

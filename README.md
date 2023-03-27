@@ -42,7 +42,8 @@ container using one of these images:
 Note: Debian family containers are provided for different CPU
 architectures.
 
-A typical invocation would look like this
+A typical invocation to accompany the Git commands shown above would
+look like this:
 
 ```
 $ docker run \

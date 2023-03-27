@@ -64,7 +64,7 @@ BUILT := .built
 ifdef CONTAINER_IMAGE
   IMAGE_ARG := --build-arg 'FROM=$(CONTAINER_IMAGE)'
 endif
-$(BUILT): Makefile prep service Dockerfile entry $(MAKEFILE)
+$(BUILT): prep service Dockerfile entry Makefile
 	docker build \
 		$(IMAGE_ARG) \
 		-t $(IMAGE) \
@@ -109,16 +109,32 @@ ifdef NO_HALT
   DOCKER_ARGS += --env BUILD_NO_HALT=1
 endif
 
-run: $(BUILT) $(BUILD_DIR)
-	docker run \
-		--name "$(CONTAINER)" \
+
+DOCKER_RUN := ./docker-run
+$(DOCKER_RUN): Makefile
+	echo "#!/bin/sh -e" > "$@"
+	echo docker run \
+		--name \"$(CONTAINER)\" \
 		--tty \
 		--tmpfs /tmp \
 		--tmpfs /run \
-		--volume "$(BUILD_DIR):/build" \
+		--volume \"$(BUILD_DIR):/build\" \
 		--rm \
 		$(DOCKER_ARGS) \
-		"$(IMAGE)" \
+		\"$(IMAGE)\" \
+		>> "$@"
+	chmod +x "$@"
+TO_CLEAN += $(DOCKER_RUN)
+
+example: $(DOCKER_RUN)
+	@echo
+	@echo "To run this container on this system:"
+	@echo
+	cat $(DOCKER_RUN)
+
+
+run: $(BUILT) $(BUILD_DIR) $(DOCKER_RUN)
+	$(DOCKER_RUN) \
 	|| STATUS=$$? ; \
 	if [ $$STATUS -eq 0 -o $$STATUS -eq 130 ]; then \
 		true ; \

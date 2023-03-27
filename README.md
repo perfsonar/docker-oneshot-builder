@@ -39,8 +39,12 @@ container using one of these images:
 | Debian | Ubuntu | 18 | `ghcr.io/perfsonar/docker-one-shot-builder/u18:latest` |
 | Debian | Ubuntu | 20 | `ghcr.io/perfsonar/docker-one-shot-builder/u20:latest` |
 
-Note: Debian family containers are provided for different CPU
+Notes:
+
+ * These containers are based on the perfSONAR Unibuild containers.
+ * Debian family containers are provided for different CPU
 architectures.
+
 
 A typical invocation to accompany the Git commands shown above would
 look like this:

@@ -1,0 +1,6 @@
+#!/bin/sh -e
+#
+# System prep for RedHat 9
+#
+
+echo TODO: This is no longer needed.

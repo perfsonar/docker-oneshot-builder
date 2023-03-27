@@ -1,0 +1,11 @@
+#!/bin/sh -e
+#
+# System prep for RedHat
+#
+
+${OSINFO_RPM_INSTALLER} -y update
+
+${OSINFO_RPM_INSTALLER} -y install \
+			make \
+			sudo \
+			systemd

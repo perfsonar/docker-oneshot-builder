@@ -1,0 +1,7 @@
+#!/bin/sh -e
+#
+# System prep for RedHat 8
+#
+
+dnf -y install dnf-plugins-core
+dnf config-manager --set-enabled powertools

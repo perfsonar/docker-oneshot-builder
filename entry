@@ -1,0 +1,43 @@
+#!/bin/bash -e
+#
+# Entry point for one-shot Unibuild container.  It is expected that
+# something else will shut the system down with halt(8), causing
+# systemd to exit.
+#
+
+set -e
+
+# Find Systemd.  It's in different places on different OSes.
+
+for CANDIDATE in /lib/systemd/systemd /usr/lib/systemd/systemd /sbin/init
+do
+    if [ -f "${CANDIDATE}" -a -x "${CANDIDATE}" ]
+    then
+	SYSTEMD="${CANDIDATE}"
+	break
+    fi
+done
+
+if [ -z "${SYSTEMD}" ]
+then
+	echo >&2 'ERROR: systemd is not installed'
+	exit 1
+fi
+
+
+# Add any environment variables beginning with BUILD_ to the system's
+# profile so other processes can see them.
+STATUS=0
+env | egrep -e '^BUILD_' >> /etc/profile.d/build.sh || STATUS=$?
+if [ "${STATUS}" -gt 1 ]
+then
+    exit 1
+fi
+
+# Run it.
+
+echo "$0: Starting $SYSTEMD (PID $$)"
+# This has to be exec'd so its PID is 1.
+exec $SYSTEMD
+
+# When systemd exits, the container will be destroyed.

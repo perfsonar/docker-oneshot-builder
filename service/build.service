@@ -1,0 +1,18 @@
+[Unit]
+Description=Builder entry point
+Requires=multi-user.target
+After=multi-user.target
+
+[Service]
+Type=exec
+PassEnvironment=BUILD_NO_HALT
+# This will be run out of /usr/bin.
+ExecStart=build
+
+StandardInput=tty-force
+StandardOutput=tty
+StandardError=tty
+WorkingDirectory=/tmp
+
+[Install]
+WantedBy=multi-user.target

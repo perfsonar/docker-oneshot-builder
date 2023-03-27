@@ -1,0 +1,14 @@
+#!/bin/sh -e
+#
+# System prep for Debian
+#
+
+apt-get update
+
+apt-get -y install \
+	make \
+	sudo \
+	systemd
+
+### # TODO: Some Debian variants need this but don't install it.
+### apt-get install -y systemd-sysv

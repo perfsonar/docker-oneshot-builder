@@ -1,0 +1,91 @@
+#!/bin/sh -e
+#
+# Build a product in place as an unprivileged user.
+#
+# Set $BUILD to the directory where the build should be done.  This
+# defaults to /build.
+#
+# The build consists of running 'make' in $BUILD as the user and group
+# that owns $BUILD.
+#
+# The exit status will be written into $BUILD/BUILD/status and any
+# output will be placed in $BUILD/BUILD/log.  That directory and its
+# contents will end up owned by the owner of $BUILD.
+#
+
+die()
+{
+    echo "$@" 1>&2
+    exit 1
+}
+
+
+# Halt the system on exit unless we're interactive, in which case
+# we're debugging.
+
+cleanup()
+{
+    if [ -n "${BUILD_NO_HALT}" ]
+    then
+	echo "NO_HALT set. Not halting system."
+    else
+	echo "Halting system."
+	halt
+    fi
+}
+trap cleanup EXIT
+
+
+# This gives systemd some time to settle before we start making
+# output.
+sleep 1
+
+
+# Where the work happens
+
+BUILD=${BUILD:-/build}
+[ -d "${BUILD}" ] || die "FAILED: Directory ${BUILD} not present."
+
+if [ ! -e "${BUILD}/Makefile" ]
+then
+    echo "FAILED: No Makefile present in ${BUILD}." 1>&2
+    exit 1
+fi
+
+
+# Where the by-products go
+
+PRODUCTS="${BUILD}/BUILD"
+rm -rf "${PRODUCTS}"
+mkdir -p "${PRODUCTS}"
+
+
+# User account to match build area's owner.  This account will do the
+# build and is given frictionless sudo..
+
+BUILD_USER=build
+BUILD_GROUP=build
+BUILD_AREA_UID=$(stat -c %u "${BUILD}")
+BUILD_AREA_GID=$(stat -c %g "${BUILD}")
+
+groupadd -g "${BUILD_AREA_GID}" "${BUILD_GROUP}"
+useradd -u "${BUILD_AREA_UID}" -g "${BUILD_GROUP}" -m "${BUILD_USER}"
+echo "${BUILD_USER} ALL= (ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${BUILD_USER}"
+
+
+# Make it happen.
+
+echo STARTING BUILD
+echo
+
+(STATUS=0 \
+     && su - "${BUILD_USER}" -c "make -C '${BUILD}'" 2>&1 \
+     || STATUS=1 ; \
+ echo "${STATUS}" > "${PRODUCTS}/status" \
+ ) | tee "${PRODUCTS}/log"
+
+echo
+echo BUILD COMPLETE - EXITED $(cat "${PRODUCTS}/status")
+
+# Make sure the by-products are owned by the user that ran it.
+chown -R "${BUILD_USER}:${BUILD_GROUP}" "${PRODUCTS}"

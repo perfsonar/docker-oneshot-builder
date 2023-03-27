@@ -67,7 +67,7 @@ endif
 $(BUILT): prep service Dockerfile entry Makefile
 	docker build \
 		$(IMAGE_ARG) \
-		-t $(IMAGE) \
+		--tag $(IMAGE) \
 		.
 	touch $@
 TO_CLEAN += $(BUILT)

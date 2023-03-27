@@ -46,7 +46,6 @@ A typical invocation would look like this
 
 ```
 $ docker run \
-    --name "kafoobulator-builder-el9" \
     --tty \
     --tmpfs /tmp \
     --tmpfs /run \
@@ -63,7 +62,7 @@ run correctly inside Docker containers that vary by operating system:
 |--------|-----------|
 | macOS | `--privileged` |
 | Linux with cgroups v1 | `--privileged` |
-| Linux with cgroups v2¹ | ``--volume /sys/fs/cgroup:/sys/fs/cgroup:ro` |
+| Linux with cgroups v2¹ | `--volume /sys/fs/cgroup:/sys/fs/cgroup:ro` |
 
 ¹Systems running cgroups v2 can be identified by the existence of a
  `/sys/fs/cgroup/cgroup.controllers` directory.

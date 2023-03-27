@@ -76,16 +76,32 @@ container: $(BUILT)
 
 DOCKER_ARGS :=
 
-# TODO: Need to deal with this automagically for other systems.
-# This is for EL8.
-#  - macOS:
-#    DOCKER_ARGS + --privileged
-#  - Linux CGROUPS v1 (EL7, EL8):
-    DOCKER_ARGS += --privileged
-#  - Linux CGROUPS v2 (EL9; V2 is if /sys/fs/cgroup/cgroup.controllers exists):
-#    DOCKER_ARGS += --volume /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-#
+# Figure out the required privileges for Docker.
+
+OS := $(shell uname -s)
+
+ifeq ($(OS),Linux)
+
+  ifeq ($(wildcard /sys/fs/cgroup/cgroup.controllers),)
+    # CGROUPS v1
+    DOCKER_ARGS += --privileged
+  else
+    # CGROUPS v2
+    DOCKER_ARGS += --volume /sys/fs/cgroup:/sys/fs/cgroup:ro
+  endif
+
+else ifeq ($(OS),Darwin)
+
+  DOCKER_ARGS + --privileged
+
+else
+
+  $(error $(OS) is not supported)
+
+endif
+
+
 # Note that this exits with a 130 for a normal halt.
 
 # Define this to prevent the container from halting when done.

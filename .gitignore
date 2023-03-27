@@ -1,0 +1,6 @@
+# Things we don't care about.
+
+*~
+.built
+build-area
+docker-run

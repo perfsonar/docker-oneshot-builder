@@ -55,7 +55,7 @@ fi
 
 # Where the by-products go
 
-PRODUCTS="${BUILD}/BUILD"
+PRODUCTS="${BUILD}/DOSB"
 rm -rf "${PRODUCTS}"
 mkdir -p "${PRODUCTS}"
 

@@ -124,15 +124,16 @@ fi
 
 STATUS=0
 ${ECHO} ${SUDO} docker run \
-       ${NAME_ARG} \
-       --tty \
-       --tmpfs /tmp \
-       --tmpfs /run \
-       --volume "${BUILD_DIR}:/build" \
-       ${NO_HALT} \
-       --rm \
-       ${PERM_ARGS} \
-       "${CONTAINER}" \
+	${NAME_ARG} \
+	--pull always \
+	--tty \
+	--tmpfs /tmp \
+	--tmpfs /run \
+	--volume "${BUILD_DIR}:/build" \
+	${NO_HALT} \
+	--rm \
+	${PERM_ARGS} \
+	"${CONTAINER}" \
     || STATUS=$?
 
 # Docker exits with a 130 when systemd is stopped with SIGINT (halt).

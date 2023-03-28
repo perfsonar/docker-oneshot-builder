@@ -6,8 +6,7 @@ After=multi-user.target
 [Service]
 Type=exec
 PassEnvironment=BUILD_NO_HALT
-# This will be run out of /usr/bin.
-ExecStart=build
+ExecStart=/usr/bin/build
 
 StandardInput=tty-force
 StandardOutput=tty

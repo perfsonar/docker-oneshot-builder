@@ -117,8 +117,13 @@ esac
 
 # Make it happen
 
+if [ "$(id -u)" -ne 0 ]
+then
+    SUDO=sudo
+fi
+
 STATUS=0
-${ECHO} docker run \
+${ECHO} ${SUDO} docker run \
        ${NAME_ARG} \
        --tty \
        --tmpfs /tmp \

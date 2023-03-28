@@ -30,6 +30,13 @@ ifndef CONTANER_IMAGE
 endif
 
 
+ifneq ($(shell id -u),0)
+  DOCKER=sudo docker
+else
+  DOCKER=docker
+endif
+
+
 default: run
 
 
@@ -69,7 +76,7 @@ ifdef CONTAINER_FROM
   IMAGE_ARG := --build-arg 'FROM=$(CONTAINER_FROM)'
 endif
 $(BUILT): prep container Dockerfile Makefile
-	docker build \
+	$(DOCKER) build \
 		$(IMAGE_ARG) \
 		--tag $(IMAGE) \
 		.
@@ -102,23 +109,23 @@ persist: $(RUN_DEPS)
 
 # Log into the persisted container
 shell:
-	docker exec -it "$(CONTAINER_NAME)" bash
+	$(DOCKER) exec -it "$(CONTAINER_NAME)" bash
 
 
 # Stop the persisted container
 halt:
-	docker exec -it "$(CONTAINER_NAME)" halt
+	$(DOCKER) exec -it "$(CONTAINER_NAME)" halt
 
 
 # Remove the container
 rm:
-	-docker exec -it "$(CONTAINER_NAME)" halt
-	docker rm -f "$(CONTAINER_NAME)"
+	-$(DOCKER) exec -it "$(CONTAINER_NAME)" halt
+	$(DOCKER) rm -f "$(CONTAINER_NAME)"
 
 
 clean: rm
 	make -C prep clean
 	make -C container clean
 	make -C test-product clean
-	docker image rm -f "$(IMAGE)"
+	$(DOCKER) image rm -f "$(IMAGE)"
 	rm -rf $(TO_CLEAN) *~

@@ -1,0 +1,31 @@
+#
+# Post Prep Script for Linux
+#
+
+cd "$(dirname $0)"
+
+# Systemd
+
+systemctl mask systemd-firstboot systemd-modules-load systemd-logind console-getty
+systemctl unmask systemd-udevd
+
+
+do_install()
+{
+    local MODE=$1
+    shift
+    install --owner root --group root --mode=$MODE "$@"
+}
+
+# Entry point.  This runs systemd.
+
+do_install 555 container/entry /entry
+echo Installed entry script
+
+# Build service
+
+do_install 555 container/build /usr/bin/build
+do_install 444 container/build.target /etc/systemd/system/build.target
+do_install 444 container/build.service /etc/systemd/system/build.service
+echo Installed builder and service
+systemctl enable build

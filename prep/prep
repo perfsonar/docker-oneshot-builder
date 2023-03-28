@@ -66,21 +66,21 @@ set_osinfo_macro RPM_INSTALLER "${INSTALLER}"
 WHEREAMI=$(dirname "$0")
 
 echo
-echo PREPARING SYSTEM
+echo PREPARING CONTAINER
 echo
 
 for SUFFIX in '' '-post'
 do
     for SCRIPT in \
-	${OSINFO_OS}${SUFFIX} \
-	    ${OSINFO_OS}-${OSINFO_FAMILY}${SUFFIX} \
-	    ${OSINFO_OS}-${OSINFO_FAMILY}-${OSINFO_RELEASE_MAJOR}${SUFFIX} \
-	    ${OSINFO_OS}-${OSINFO_FAMILY}-${OSINFO_RELEASE_MAJOR}-${OSINFO_DISTRO}${SUFFIX}
+	${OSINFO_OS} \
+	    ${OSINFO_OS}-${OSINFO_FAMILY} \
+	    ${OSINFO_OS}-${OSINFO_FAMILY}-${OSINFO_RELEASE_MAJOR} \
+	    ${OSINFO_OS}-${OSINFO_FAMILY}-${OSINFO_RELEASE_MAJOR}-${OSINFO_DISTRO}
     do
-	TO_RUN="${WHEREAMI}/${SCRIPT}"
+	TO_RUN="${WHEREAMI}/${SCRIPT}${SUFFIX}"
 	if [ -x "${TO_RUN}" ]
 	then
-	    echo "Doing prep for ${SCRIPT}:"
+	    echo "Doing prep for ${SCRIPT}${SUFFIX}:"
 	    echo
 	    ${TO_RUN}
 	    echo

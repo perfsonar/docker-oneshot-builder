@@ -75,7 +75,7 @@ BUILT := .built
 ifdef CONTAINER_FROM
   IMAGE_ARG := --build-arg 'FROM=$(CONTAINER_FROM)'
 endif
-$(BUILT): prep container Dockerfile Makefile
+$(BUILT): prep Dockerfile Makefile
 	$(DOCKER) build \
 		$(IMAGE_ARG) \
 		--tag $(IMAGE) \
@@ -125,7 +125,6 @@ rm:
 
 clean: rm
 	make -C prep clean
-	make -C container clean
 	make -C test-product clean
 	$(DOCKER) image rm -f "$(IMAGE)"
 	rm -rf $(TO_CLEAN) *~

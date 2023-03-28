@@ -32,12 +32,12 @@ container using one of these images:
 
 | Family | Distribution | Version | Container |
 |--------|--------------|:-------:|-----------|
-| Red Hat | CentOS | 7 | `ghcr.io/perfsonar/docker-one-shot-builder/el7:latest` |
-| Red Hat | Alma Linux | 8 | `ghcr.io/perfsonar/docker-one-shot-builder/el8:latest` |
-| Red Hat | Alma Linux | 9 | `ghcr.io/perfsonar/docker-one-shot-builder/el9:latest` |
-| Debian | Debian | 10 | `ghcr.io/perfsonar/docker-one-shot-builder/d10:latest` |
-| Debian | Ubuntu | 18 | `ghcr.io/perfsonar/docker-one-shot-builder/u18:latest` |
-| Debian | Ubuntu | 20 | `ghcr.io/perfsonar/docker-one-shot-builder/u20:latest` |
+| Red Hat | CentOS | 7 | `ghcr.io/perfsonar/docker-oneshot-builder/el7:latest` |
+| Red Hat | Alma Linux | 8 | `ghcr.io/perfsonar/docker-oneshot-builder/el8:latest` |
+| Red Hat | Alma Linux | 9 | `ghcr.io/perfsonar/docker-oneshot-builder/el9:latest` |
+| Debian | Debian | 10 | `ghcr.io/perfsonar/docker-oneshot-builder/d10:latest` |
+| Debian | Ubuntu | 18 | `ghcr.io/perfsonar/docker-oneshot-builder/u18:latest` |
+| Debian | Ubuntu | 20 | `ghcr.io/perfsonar/docker-oneshot-builder/u20:latest` |
 
 Notes:
 
@@ -57,7 +57,7 @@ $ docker run \
     --volume "./kafoobulator:/build" \
     --rm \
     <PERMISSIONS: SEE NOTE BELOW> \
-    ghcr.io/perfsonar/docker-one-shot-builder/el9:latest
+    ghcr.io/perfsonar/docker-oneshot-builder/el9:latest
 ```
 
 Additional permissions-related arguments are required for `systemd` to
@@ -114,7 +114,7 @@ Where:
  * `SOURCE-IMAGE`is the name of the Docker image to be used in building the container.
   * `CONTAINER-NAME` is the name of the
 
-A typical application would to build this container on top of a Docker-One-Shot-Builder container:
+A typical application would to build this container on top of a DOSB container:
 ```
 docker build --build-arg 'FROM=ghcr.io/perfsonar/unibuild/el9:latest' --tag el9dosb
 ```

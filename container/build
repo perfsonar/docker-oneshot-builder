@@ -68,9 +68,15 @@ BUILD_GROUP=build
 BUILD_AREA_UID=$(stat -c %u "${BUILD}")
 BUILD_AREA_GID=$(stat -c %g "${BUILD}")
 
-groupadd -g "${BUILD_AREA_GID}" "${BUILD_GROUP}"
-useradd -u "${BUILD_AREA_UID}" -g "${BUILD_GROUP}" -m "${BUILD_USER}"
-echo "${BUILD_USER} ALL= (ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${BUILD_USER}"
+if [ "${BUILD_AREA_GID}" -ne 0 ]
+then
+    groupadd -g "${BUILD_AREA_GID}" "${BUILD_GROUP}"
+fi
+if [ "${BUILD_AREA_UID}" -ne 0 ]
+then
+   useradd -u "${BUILD_AREA_UID}" -g "${BUILD_GROUP}" -m "${BUILD_USER}"
+   echo "${BUILD_USER} ALL= (ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${BUILD_USER}"
+fi
 
 
 # Make it happen.

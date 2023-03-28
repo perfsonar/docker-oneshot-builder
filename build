@@ -1,0 +1,134 @@
+#!/bin/sh -e
+#
+# Do a DOSB build with a container from GHCR.
+#
+#BEGIN-HELP
+# Usage:  build [ OPTIONS ] BUILD-DIR CONTAINER-OS
+#
+# Arguments (see README.md for more information):
+#     BUILD-DIR is the build directory
+#     CONTAINER-OS is one of el{7,8,9}, d10, u{18,20}
+#
+# Options:
+#     --absolute  Take CONTAINER-OS as the full name of a container
+#     --command   Show the docker run command to run the container
+#     --name N    Name the container 'N'
+#     --no-halt   Don't halt the container when the build finishes
+#END-HELP
+#
+
+WHOAMI=$(basename "$0")
+
+die()
+{
+    echo "$@" 1>&2
+    exit 1
+}
+
+
+self_help()
+{
+    sed -e '1,/^#BEGIN-HELP/d ; /^#END-HELP/,$d ; s/^#\s\{0,1\}//' "$0"
+    exit ${1:-0}
+}
+
+
+# Gargle the arguments
+
+ABSOLUTE=false
+while echo "$1" | egrep -q -e '^--'
+do
+    OPTION=$1
+    shift
+
+    case "${OPTION}" in
+
+	--help)
+	    self_help
+	    ;;
+
+	--absolute)
+	    ABSOLUTE=true
+	    ;;
+
+	--command)
+	    ECHO=echo
+	    ;;
+
+	--name)
+	    NAME_ARG="--name $1"
+	    shift
+	    ;;
+
+	--no-halt)
+	    NO_HALT="--env BUILD_NO_HALT=1"
+	    ;;
+
+	--*)
+	    die "Unknown option ${OPTION}."
+	    ;;
+    esac
+done
+
+[ "$#" -eq 2 ] \
+    || self_help 1
+
+
+# Build directory
+
+BUILD_DIR="$1"
+[ -d "$1" -a -w "$1" ] \
+    || die "${BUILD_DIR} is not a writable directory."
+echo "${BUILD_DIR}" | fgrep -q ':' \
+    && die "Build directory cannot contain colons."
+
+
+# Container name
+
+if ${ABSOLUTE}
+then
+    CONTAINER="$2"
+else
+    CONTAINER="ghcr.io/perfsonar/docker-oneshot-builder/$2:latest"
+fi
+
+
+# Permission args
+
+OS=$(uname -s)
+case "${OS}" in
+    Linux)
+	if [ -d '/sys/fs/cgroup/cgroup.controllers' ]
+	then
+	    # Cgroups v2
+	    PERM_ARGS="--volume /sys/fs/cgroup:/sys/fs/cgroup:ro"
+	else
+	    PERM_ARGS="--privileged"
+	fi
+    ;;
+    Darwin)
+	PERM_ARGS="--privileged"
+    ;;
+    *)
+	die "No support for ${OS}" 1>&2
+	exit 1
+esac
+
+
+# Make it happen
+
+STATUS=0
+${ECHO} docker run \
+       ${NAME_ARG} \
+       --tty \
+       --tmpfs /tmp \
+       --tmpfs /run \
+       --volume "${BUILD_DIR}:/build" \
+       ${NO_HALT} \
+       --rm \
+       ${PERM_ARGS} \
+       "${CONTAINER}" \
+    || STATUS=$?
+
+# Docker exits with a 130 when systemd is stopped with SIGINT (halt).
+[ $STATUS -eq 0 -o $STATUS -eq 130 ] || false

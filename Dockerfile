@@ -16,19 +16,17 @@ RUN systemctl unmask systemd-udevd
 
 # Entry point.  This runs systemd.
 
-COPY --chown=root:root --chmod=755 entry /entry
-ENTRYPOINT [ "/entry" ]
+COPY --chown=root:root --chmod=755 container/entry /entry
 
-# Normally, we'd let Docker just run this by default with 'ENTRYPOINT
-# /entry'.  Debian-flavored containers don't handle it properly and
-# the PID ends up being something other than 1.  That prevents systemd
-# from running properly.
+# This must be the "exec" format; Debian doesn't handle shell-style
+# properly.
+ENTRYPOINT [ "/entry" ]
 
 
 # Build service
 
 VOLUME /build
-COPY --chown=root:root --chmod=555 service/build /usr/bin/build
-COPY --chown=root:root --chmod=444 service/build.target /etc/systemd/system/build.target
-COPY --chown=root:root --chmod=444 service/build.service /etc/systemd/system/build.service
+COPY --chown=root:root --chmod=555 container/build /usr/bin/build
+COPY --chown=root:root --chmod=444 container/build.target /etc/systemd/system/build.target
+COPY --chown=root:root --chmod=444 container/build.service /etc/systemd/system/build.service
 RUN systemctl enable build

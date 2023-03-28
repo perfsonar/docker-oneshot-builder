@@ -6,24 +6,28 @@
 
 
 # Set this to a Docker image to use something other than the default.
-# CONTAINER_IMAGE := ghcr.io/perfsonar/unibuild/el9:latest
+# CONTAINER_FROM := ghcr.io/perfsonar/unibuild/el9:latest
 
 # Set this to clone a Git repo instead of using the provided example.
 #CLONE := https://github.com/perfsonar/unibuild.git
 
 # Example:  Build Unibuild.
-# # CONTAINER_IMAGE := The default is fine.
+# # CONTAINER_FROM := The default is fine.
 # CLONE := https://github.com/perfsonar/unibuild.git
 # # CLONE_BRANCH := Not Applicable
 
 
 # Example:  Build pScheduler
-#CONTAINER_IMAGE := ghcr.io/perfsonar/unibuild/el8:latest
+#CONTAINER_FROM := ghcr.io/perfsonar/unibuild/el8:latest
 #CLONE := https://github.com/perfsonar/pscheduler.git
 #CLONE_BRANCH := 5.0.0
 
 
 # ----- NO USER-SERVICEABLE PARTS BELOW THIS LINE -----
+
+ifndef CONTANER_IMAGE
+  CONTAINER_FROM=almalinux:8
+endif
 
 
 default: run
@@ -56,15 +60,15 @@ endif
 
 
 IMAGE := builder
-CONTAINER := builder-test
+CONTAINER_NAME := builder-test
 
 default: run
 
 BUILT := .built
-ifdef CONTAINER_IMAGE
-  IMAGE_ARG := --build-arg 'FROM=$(CONTAINER_IMAGE)'
+ifdef CONTAINER_FROM
+  IMAGE_ARG := --build-arg 'FROM=$(CONTAINER_FROM)'
 endif
-$(BUILT): prep service Dockerfile entry Makefile
+$(BUILT): prep container Dockerfile Makefile
 	docker build \
 		$(IMAGE_ARG) \
 		--tag $(IMAGE) \
@@ -72,93 +76,49 @@ $(BUILT): prep service Dockerfile entry Makefile
 	touch $@
 TO_CLEAN += $(BUILT)
 
-container: $(BUILT)
+image: $(BUILT)
 
-DOCKER_ARGS :=
+BUILD_ARGS += \
+	--name "$(CONTAINER_NAME)" \
+	--absolute \
+	"$(BUILD_DIR)" "$(IMAGE)"
 
-
-# Figure out the required privileges for Docker.
-
-OS := $(shell uname -s)
-
-ifeq ($(OS),Linux)
-
-  ifeq ($(wildcard /sys/fs/cgroup/cgroup.controllers),)
-    # CGROUPS v1
-    DOCKER_ARGS += --privileged
-  else
-    # CGROUPS v2
-    DOCKER_ARGS += --volume /sys/fs/cgroup:/sys/fs/cgroup:ro
-  endif
-
-else ifeq ($(OS),Darwin)
-
-  DOCKER_ARGS + --privileged
-
-else
-
-  $(error $(OS) is not supported)
-
-endif
+# Show the command to run the container (for debug)
+command::
+	@./build --command $(BUILD_ARGS)
 
 
-# Note that this exits with a 130 for a normal halt.
+RUN_DEPS := $(BUILT) $(BUILD_DIR) build
 
-# Define this to prevent the container from halting when done.
-ifdef NO_HALT
-  DOCKER_ARGS += --env BUILD_NO_HALT=1
-endif
-
-
-DOCKER_RUN := ./docker-run
-$(DOCKER_RUN): Makefile
-	echo "#!/bin/sh -e" > "$@"
-	echo docker run \
-		--name \"$(CONTAINER)\" \
-		--tty \
-		--tmpfs /tmp \
-		--tmpfs /run \
-		--volume \"$(BUILD_DIR):/build\" \
-		--rm \
-		$(DOCKER_ARGS) \
-		\"$(IMAGE)\" \
-		>> "$@"
-	chmod +x "$@"
-TO_CLEAN += $(DOCKER_RUN)
-
-example: $(DOCKER_RUN)
-	@echo
-	@echo "To run this container on this system:"
-	@echo
-	cat $(DOCKER_RUN)
+# Run the container and exit
+run: $(RUN_DEPS)
+	./build $(BUILD_ARGS)
 
 
-run: $(BUILT) $(BUILD_DIR) $(DOCKER_RUN)
-	$(DOCKER_RUN) \
-	|| STATUS=$$? ; \
-	if [ $$STATUS -eq 0 -o $$STATUS -eq 130 ]; then \
-		true ; \
-	else \
-		echo "Exited $$STATUS" ; \
-		false ; \
-	fi
+# Run the container but don't exit (for debug)
+persist: $(RUN_DEPS)
+	./build --no-halt $(BUILD_ARGS)
 
 
-halt:
-	docker exec -it "$(CONTAINER)" halt
-
-rm:
-	-docker exec -it "$(CONTAINER)" halt
-	docker rm -f "$(CONTAINER)"
-
-
+# Log into the persisted container
 shell:
-	docker exec -it "$(CONTAINER)" bash
+	docker exec -it "$(CONTAINER_NAME)" bash
+
+
+# Stop the persisted container
+halt:
+	docker exec -it "$(CONTAINER_NAME)" halt
+
+
+# Remove the container
+rm:
+	-docker exec -it "$(CONTAINER_NAME)" halt
+	docker rm -f "$(CONTAINER_NAME)"
 
 
 clean: rm
 	make -C prep clean
-	make -C service clean
+	make -C container clean
 	make -C test-product clean
 	docker image rm -f "$(IMAGE)"
 	rm -rf $(TO_CLEAN) *~

@@ -14,18 +14,33 @@ without contaminating them.
 Other than Docker and access to the containers, the sole requirement
 for a DOSB is a directory (called the _build directory_) containing a
 `Makefile` that builds the product it contains using a single,
-unadorned invocation of `make`.
+unadorned invocation of `make` by an unprivileged user with
+frictionless access to `sudo`.
 
 In typical use cases, this is as simple as using Git to clone a
 repository into a directory and checking out a specific branch:
 
 ```
-$ git clone https://github.com/some-organization/kafoobulator.git
+$ git clone https://github.com/some-org/kafoobulator.git
 $ git -C some-repo checkout 1.2.3
 ```
 
 
 ## Building Using a DOSB Container
+
+### Quick Start
+
+The recommended way to build using DOSB is to run the `build` script
+directly from this repository:
+
+```
+$ git clone https://github.com/some-org/kafoobulator.git
+
+$ curl -s https://raw.githubusercontent.com/perfsonar/docker-oneshot-builder/main/build \
+     | sh -s - ./kafoobulator el9
+```
+
+### Roll Your Own
 
 Once the build directory is established, start a non-detached docker
 container using one of these images:
@@ -44,7 +59,6 @@ Notes:
  * These containers are based on the perfSONAR Unibuild containers.
  * Debian family containers are provided for different CPU
 architectures.
-
 
 A typical invocation to accompany the Git commands shown above would
 look like this:

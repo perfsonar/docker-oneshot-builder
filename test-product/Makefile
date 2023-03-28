@@ -2,11 +2,20 @@
 # Test Makefile
 #
 
-default::
-	@echo Makefile BUILDING
-	@date
-	@pwd
-	@ls -alh
+default: build
+
+
+# In case someone builds this copy.
+TO_CLEAN += DOSB
+
+# What we build
+a-file::
+	touch "$@"
+TO_CLEAN += a-file
+
+
+build:: a-file
+
 
 clean:
-	rm -rf BUILD *~
+	rm -rf $(TO_CLEAN) *~

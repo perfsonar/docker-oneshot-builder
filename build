@@ -81,6 +81,7 @@ BUILD_DIR="$1"
     || die "${BUILD_DIR} is not a writable directory."
 echo "${BUILD_DIR}" | fgrep -q ':' \
     && die "Build directory cannot contain colons."
+BUILD_DIR=$(cd "${BUILD_DIR}" && pwd)
 
 
 # Container name

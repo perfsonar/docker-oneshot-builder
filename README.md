@@ -53,7 +53,7 @@ container and run instead of the default `make` like this:
 $ git clone https://github.com/some-org/kafoobulator.git
 
 $ curl -s https://raw.githubusercontent.com/perfsonar/docker-oneshot-builder/main/build \
-     | sh -s - --script /path/to/script ./kafoobulator el9
+     | sh -s - --run /path/to/script ./kafoobulator el9
 ```
 
 

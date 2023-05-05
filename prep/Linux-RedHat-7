@@ -1,7 +1,0 @@
-#!/bin/sh -e
-#
-# System prep for RedHat 7
-#
-
-# This is a perfSONAR-specific customization.
-yum -y install http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfsonar-repo-0.11-1.noarch.rpm

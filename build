@@ -96,14 +96,15 @@ BUILD_DIR=$(cd "${BUILD_DIR}" && pwd)
 
 # Run script, stored in the DOSB-specific area
 
+PRODUCTS="${BUILD_DIR}/DOSB"
+rm -rf "${PRODUCTS}"
+
 if [ -s "${RUN_ARG}" ]
 then
-    PRODUCTS="${BUILD_DIR}/DOSB"
-    rm -rf "${PRODUCTS}"
+
     mkdir -p "${PRODUCTS}"
 
     BUILD_RUN="${PRODUCTS}/build-script"
-
     cp "${RUN_ARG}" "${BUILD_RUN}"
     chmod +x "${BUILD_RUN}"
 fi

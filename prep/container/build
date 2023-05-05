@@ -46,17 +46,11 @@ sleep 1
 BUILD=${BUILD:-/build}
 [ -d "${BUILD}" ] || die "FAILED: Directory ${BUILD} not present."
 
-if [ ! -e "${BUILD}/Makefile" ]
-then
-    echo "FAILED: No Makefile present in ${BUILD}." 1>&2
-    exit 1
-fi
 
-
-# Where the by-products go
+# Where the by-products go.  This may already exist if a build script
+# was specified.
 
 PRODUCTS="${BUILD}/DOSB"
-rm -rf "${PRODUCTS}"
 mkdir -p "${PRODUCTS}"
 
 
@@ -87,8 +81,14 @@ fi
 echo STARTING BUILD
 echo
 
+BUILD_SCRIPT="${PRODUCTS}/build-script"
+if [ ! -x "${BUILD_SCRIPT}" ]
+then
+    BUILD_SCRIPT="make"
+fi
+
 (STATUS=0 \
-     && su - "${BUILD_USER}" -c "make -C '${BUILD}'" 2>&1 \
+     && su - "${BUILD_USER}" -c "cd '${BUILD}' && ${BUILD_SCRIPT}" 2>&1 \
      || STATUS=1 ; \
  echo "${STATUS}" > "${PRODUCTS}/status" \
  ) | tee "${PRODUCTS}/log"

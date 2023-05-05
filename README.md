@@ -12,10 +12,16 @@ without contaminating them.
 ## Preparing to Build
 
 Other than Docker and access to the containers, the sole requirement
-for a DOSB is a directory (called the _build directory_) containing a
-`Makefile` that builds the product it contains using a single,
-unadorned invocation of `make` by an unprivileged user with
-frictionless access to `sudo`.
+for a one-shot build is a directory (called the _build directory_) and
+one of the following:
+
+ * A `Makefile` that builds the product it contains using a single,
+   unadorned invocation of `make` by an unprivileged user with
+   frictionless access to `sudo`.
+
+ * A script, specified with the `--run PATH` switch that will be
+   copied into the container and invoked by an unprivileged user with
+   frictionless access to `sudo`.
 
 In typical use cases, this is as simple as using Git to clone a
 repository into a directory and checking out a specific branch:
@@ -40,7 +46,20 @@ $ curl -s https://raw.githubusercontent.com/perfsonar/docker-oneshot-builder/mai
      | sh -s - ./kafoobulator el9
 ```
 
+You can specify a script on the local system to be copied into the
+container and run instead of the default `make` like this:
+
+```
+$ git clone https://github.com/some-org/kafoobulator.git
+
+$ curl -s https://raw.githubusercontent.com/perfsonar/docker-oneshot-builder/main/build \
+     | sh -s - --script /path/to/script ./kafoobulator el9
+```
+
+
 ### Roll Your Own
+
+**PLEASE DON'T DO THIS IF YOU CAN AVOID IT.**
 
 Once the build directory is established, start a non-detached docker
 container using one of these images:

@@ -19,6 +19,8 @@
 #END-HELP
 #
 
+set -e
+
 WHOAMI=$(basename "$0")
 
 die()

@@ -125,6 +125,7 @@ fi
 # Permission args
 
 OS=$(uname -s)
+OS=Linux
 case "${OS}" in
     Linux)
 	if [ -d '/sys/fs/cgroup/cgroup.controllers' ]

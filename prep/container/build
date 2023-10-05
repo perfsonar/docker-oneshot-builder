@@ -20,6 +20,17 @@ die()
 }
 
 
+# If we've been told not to do anything, just bail out.  This is for
+# use in GitHub actions so there's a container with systemd running
+# where the build is handled in its steps instead of automatically.
+
+if [ -n "${BUILD_NO_AUTO}" ]
+then
+    echo "NO_AUTO set.  Not building anything and not halting system."
+    exit 0
+fi
+
+
 # Halt the system on exit unless we're interactive, in which case
 # we're debugging.
 

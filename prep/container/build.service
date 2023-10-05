@@ -5,7 +5,7 @@ After=multi-user.target
 
 [Service]
 Type=exec
-PassEnvironment=BUILD_NO_HALT
+PassEnvironment=BUILD_NO_AUTO BUILD_NO_HALT
 ExecStart=/usr/bin/build
 
 StandardInput=tty-force

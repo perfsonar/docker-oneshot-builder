@@ -166,4 +166,17 @@ ${ECHO} ${SUDO} docker run \
     || STATUS=$?
 
 # Docker exits with a 130 when systemd is stopped with SIGINT (halt).
+# Anything else was a container problem, not a result of the build.
 [ $STATUS -eq 0 -o $STATUS -eq 130 ] || false
+
+# Check on the status of the build
+STATUS_FILE="${BUILD_DIR}/DOSB/status"
+
+[ -e "${STATUS_FILE}" ] || die "Build produced no status."
+
+BUILD_STATUS=$(cat "${STATUS_FILE}")
+if [ "${BUILD_STATUS}" -ne 0 ]
+then
+    echo "Build failed" 1>&2
+    exit "${BUILD_STATUS}"
+fi

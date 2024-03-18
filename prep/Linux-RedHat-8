@@ -4,4 +4,3 @@
 #
 
 dnf -y install dnf-plugins-core
-dnf config-manager --set-enabled powertools

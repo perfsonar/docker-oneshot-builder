@@ -1,0 +1,6 @@
+#!/bin/sh -e
+#
+# System prep for Oracle 8
+#
+
+dnf config-manager --enable ol8_codeready_builder

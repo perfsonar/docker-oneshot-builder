@@ -25,7 +25,7 @@
 
 # ----- NO USER-SERVICEABLE PARTS BELOW THIS LINE -----
 
-ifndef CONTANER_IMAGE
+ifndef CONTAINER_IMAGE
   CONTAINER_FROM=almalinux:8
 endif
 

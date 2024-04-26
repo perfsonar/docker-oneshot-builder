@@ -72,6 +72,8 @@ container using one of these images:
 | Debian | Debian | 10 | `ghcr.io/perfsonar/docker-oneshot-builder/d10:latest` |
 | Debian | Ubuntu | 18 | `ghcr.io/perfsonar/docker-oneshot-builder/u18:latest` |
 | Debian | Ubuntu | 20 | `ghcr.io/perfsonar/docker-oneshot-builder/u20:latest` |
+| Debian | Ubuntu | 22 | `ghcr.io/perfsonar/docker-oneshot-builder/u22:latest` |
+| Debian | Ubuntu | 24 | `ghcr.io/perfsonar/docker-oneshot-builder/u24:latest` |
 
 Notes:
 

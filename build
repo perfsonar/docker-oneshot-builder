@@ -119,6 +119,7 @@ then
     CONTAINER="$2"
 else
     CONTAINER="ghcr.io/perfsonar/docker-oneshot-builder/$2:latest"
+    PULL_ARG="--pull always"
 fi
 
 
@@ -154,7 +155,7 @@ fi
 STATUS=0
 ${ECHO} ${SUDO} docker run \
 	${NAME_ARG} \
-	--pull always \
+	${PULL_ARG} \
 	--tty \
 	--tmpfs /tmp \
 	--tmpfs /run \

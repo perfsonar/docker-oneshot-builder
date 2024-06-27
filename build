@@ -157,8 +157,8 @@ ${ECHO} ${SUDO} docker run \
 	${NAME_ARG} \
 	${PULL_ARG} \
 	--tty \
-	--tmpfs /tmp \
-	--tmpfs /run \
+	--tmpfs /tmp:exec \
+	--tmpfs /run:exec \
 	--volume "${BUILD_DIR}:/build" \
 	${NO_HALT} \
 	--rm \

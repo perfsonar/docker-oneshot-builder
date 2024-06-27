@@ -87,8 +87,8 @@ look like this:
 ```
 $ docker run \
     --tty \
-    --tmpfs /tmp \
-    --tmpfs /run \
+    --tmpfs /tmp:exec \
+    --tmpfs /run:exec \
     --volume "./kafoobulator:/build" \
     --rm \
     <PERMISSIONS: SEE NOTE BELOW> \

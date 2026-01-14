@@ -40,7 +40,7 @@ self_help()
 # Gargle the arguments
 
 ABSOLUTE=false
-while echo "$1" | egrep -q -e '^--'
+while echo "$1" | grep -E -q -e '^--'
 do
     OPTION=$1
     shift
@@ -91,7 +91,7 @@ done
 BUILD_DIR="$1"
 [ -d "$1" -a -w "$1" ] \
     || die "${BUILD_DIR} is not a writable directory."
-echo "${BUILD_DIR}" | fgrep -q ':' \
+echo "${BUILD_DIR}" | grep -F -q ':' \
     && die "Build directory cannot contain colons."
 BUILD_DIR=$(cd "${BUILD_DIR}" && pwd)
 

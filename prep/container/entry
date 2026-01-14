@@ -28,7 +28,7 @@ fi
 # Add any environment variables beginning with BUILD_ to the system's
 # profile so other processes can see them.
 STATUS=0
-env | egrep -e '^BUILD_' >> /etc/profile.d/build.sh || STATUS=$?
+env | grep -E -e '^BUILD_' >> /etc/profile.d/build.sh || STATUS=$?
 if [ "${STATUS}" -gt 1 ]
 then
     exit 1

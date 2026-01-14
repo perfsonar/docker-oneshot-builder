@@ -66,16 +66,16 @@ debuntu: policy-rc-d-hack
 
 PERFSONAR_RPM_REPO := http://software.internet2.edu/rpms/$(OS)/x86_64/latest/packages/perfSONAR-repo-0.10-1.noarch.rpm
 el:
-	sudo yum -y install epel-release
+	sudo dnf -y install epel-release
 	rpm -q perfSONAR-repo > /dev/null 2>&1 \
-		|| sudo yum -y install $(PERFSONAR_RPM_REPO)
+		|| sudo dnf -y install $(PERFSONAR_RPM_REPO)
 ifdef STAGING
 	@printf "\n\nInstalling staging repo\n\n"
-	sudo yum -y install perfSONAR-repo-staging
+	sudo dnf -y install perfSONAR-repo-staging
 endif
-	sudo yum -y makecache
-	sudo yum -y update
-	sudo yum -y install perfsonar-testpoint
+	sudo dnf -y makecache
+	sudo dnf -y update
+	sudo dnf -y install perfsonar-testpoint
 
 
 #

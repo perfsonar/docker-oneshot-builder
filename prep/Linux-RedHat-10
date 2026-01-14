@@ -1,0 +1,7 @@
+#!/bin/sh -e
+#
+# System prep for RedHat 10
+#
+
+# This is so we have su
+dnf -y install util-linux

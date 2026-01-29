@@ -86,6 +86,7 @@ then
    chmod 400 "/etc/sudoers.d/${BUILD_USER}"
    echo AFTER:
    ls -alh /etc/sudoers.d
+   sudo -v
 else
    # We're already root.  Be root.
    BUILD_USER=root

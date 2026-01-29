@@ -83,17 +83,8 @@ then
    echo "${BUILD_USER} ALL= (ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${BUILD_USER}"
    chmod 400 "/etc/sudoers.d/${BUILD_USER}"
    ls -al /etc/shadow
-   ls -al /etc/passwd
+   chmod 640 /etc/shadow
 
-   # run a one-shot command as build (CI-friendly)
-   su -s /bin/bash - build -c '
-    set -e
-    whoami
-    id
-    cd "$GITHUB_WORKSPACE"
-    touch  .build_can_write
-    
- 
 else
    # We're already root.  Be root.
    BUILD_USER=root

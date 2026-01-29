@@ -81,6 +81,11 @@ if [ "${BUILD_AREA_UID}" -ne 0 ]
 then
    useradd -u "${BUILD_AREA_UID}" -g "${BUILD_GROUP}" -m "${BUILD_USER}"
    echo "${BUILD_USER} ALL= (ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${BUILD_USER}"
+   echo BEFORE:
+   ls -alh /etc/sudoers.d
+   chmod 400 "/etc/sudoers.d/${BUILD_USER}"
+   echo AFTER:
+   ls -alh /etc/sudoers.d
 else
    # We're already root.  Be root.
    BUILD_USER=root

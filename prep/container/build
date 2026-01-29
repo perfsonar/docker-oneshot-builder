@@ -81,18 +81,9 @@ if [ "${BUILD_AREA_UID}" -ne 0 ]
 then
    useradd -u "${BUILD_AREA_UID}" -g "${BUILD_GROUP}" -m "${BUILD_USER}"
    echo "${BUILD_USER} ALL= (ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${BUILD_USER}"
-   echo BEFORE:
-   ls -alh /etc/sudoers.d
    chmod 400 "/etc/sudoers.d/${BUILD_USER}"
-   echo AFTER:
-   ls -alh /etc/sudoers.d 
-   cat "/etc/sudoers.d/${BUILD_USER}"
-   id
-   getent passwd build || grep '^build:' /etc/passwd
-   echo "pam sudo output"
-   # as root
-   useradd -m -s /bin/bash build || true
-   chown -R build:build "$GITHUB_WORKSPACE" || true
+   ls -al /etc/shadow
+   ls -al /etc/passwd
 
    # run a one-shot command as build (CI-friendly)
    su -s /bin/bash - build -c '

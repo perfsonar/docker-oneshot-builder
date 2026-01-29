@@ -25,8 +25,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-       os: [   'el9'  ]
-        #os: [ 'ol8', 'el9', 'el10', 'd11', 'd12', 'u20', 'u22', 'u24' ]
+       os: [ 'ol8', 'el9', 'el10', 'd11', 'd12', 'u20', 'u22', 'u24' ]
 
     runs-on: ubuntu-latest
     permissions:

@@ -89,9 +89,7 @@ then
    cat "/etc/sudoers.d/${BUILD_USER}"
    id
    getent passwd build || grep '^build:' /etc/passwd
-   su -s /bin/bash - build
-   sudo -n true
-
+ 
 else
    # We're already root.  Be root.
    BUILD_USER=root

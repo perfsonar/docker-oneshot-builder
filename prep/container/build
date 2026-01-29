@@ -82,7 +82,8 @@ then
    useradd -u "${BUILD_AREA_UID}" -g "${BUILD_GROUP}" -m "${BUILD_USER}"
    echo "${BUILD_USER} ALL= (ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${BUILD_USER}"
    chmod 400 "/etc/sudoers.d/${BUILD_USER}"
-   ls -al /etc/shadow
+   # Added change shadow file perms to fix PAM account management error
+   # https://www.tunbury.org/2025/05/13/ubuntu-apparmor/
    chmod 640 /etc/shadow
 
 else

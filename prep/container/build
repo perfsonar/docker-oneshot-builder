@@ -90,7 +90,18 @@ then
    id
    getent passwd build || grep '^build:' /etc/passwd
    echo "pam sudo output"
-   cat /etc/pam.d/sudo
+   # as root
+   useradd -m -s /bin/bash build || true
+   chown -R build:build "$GITHUB_WORKSPACE" || true
+
+   # run a one-shot command as build (CI-friendly)
+   su -s /bin/bash - build -c '
+    set -e
+    whoami
+    id
+    cd "$GITHUB_WORKSPACE"
+    touch  .build_can_write
+    
  
 else
    # We're already root.  Be root.

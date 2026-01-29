@@ -89,6 +89,8 @@ then
    cat "/etc/sudoers.d/${BUILD_USER}"
    id
    getent passwd build || grep '^build:' /etc/passwd
+   echo "pam sudo output"
+   cat /etc/pam.d/sudo
  
 else
    # We're already root.  Be root.
